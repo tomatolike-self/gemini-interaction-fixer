@@ -408,6 +408,9 @@
     // 最小化面板
     function minimizePanel() {
         const panel = compactPanel;
+        const title = panel.children[0];  // 标题元素
+        const status = panel.children[1]; // 状态元素
+        const buttonContainer = panel.children[2]; // 按钮容器
         const isMinimized = panel.style.height === '20px';
 
         if (isMinimized) {
@@ -415,19 +418,82 @@
             panel.style.height = 'auto';
             panel.style.width = '120px';
             panel.style.cursor = 'move';
-            panel.querySelector('#compact-status').style.display = 'block';
-            panel.querySelector('div:last-child').style.display = 'flex';
+
+            // 恢复状态显示
+            status.style.display = 'block';
+
+            // 恢复按钮容器显示
+            buttonContainer.style.display = 'flex';
+
+            // 恢复最小化按钮文本
             document.getElementById('minimize-btn').textContent = '—';
+
+            // 恢复标题显示
+            title.textContent = '🔧 修复器';
+            title.style.marginBottom = '6px';
+            title.style.textAlign = 'center';
+            title.style.paddingLeft = '0px';
+
+            // 移除恢复按钮（如果存在）
+            const restoreBtn = document.getElementById('restore-btn');
+            if (restoreBtn) {
+                restoreBtn.remove();
+            }
+
             console.log('🔧 面板已恢复');
         } else {
             // 最小化面板
             panel.style.height = '20px';
             panel.style.width = '80px';
             panel.style.cursor = 'move';
-            panel.querySelector('#compact-status').style.display = 'none';
-            panel.querySelector('div:last-child').style.display = 'none';
-            document.getElementById('minimize-btn').textContent = '+';
-            console.log('🔧 面板已最小化，可拖拽移动');
+
+            // 隐藏状态显示
+            status.style.display = 'none';
+
+            // 隐藏按钮容器
+            buttonContainer.style.display = 'none';
+
+            // 修改标题显示
+            title.textContent = '🔧';
+            title.style.marginBottom = '0px';
+            title.style.textAlign = 'left';
+            title.style.paddingLeft = '5px';
+
+            // 创建独立的恢复按钮
+            const restoreBtn = document.createElement('button');
+            restoreBtn.id = 'restore-btn';
+            restoreBtn.textContent = '+';
+            restoreBtn.style.cssText = `
+                position: absolute;
+                right: 5px;
+                top: 50%;
+                transform: translateY(-50%);
+                background: #4CAF50;
+                color: white;
+                border: none;
+                width: 16px;
+                height: 16px;
+                border-radius: 2px;
+                cursor: pointer;
+                font-size: 12px;
+                font-weight: bold;
+                line-height: 1;
+                padding: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            `;
+
+            // 绑定恢复按钮事件
+            restoreBtn.onclick = (e) => {
+                e.stopPropagation();
+                minimizePanel();
+            };
+
+            // 添加恢复按钮到面板
+            panel.appendChild(restoreBtn);
+
+            console.log('🔧 面板已最小化，点击右侧+号恢复');
         }
     }
 
